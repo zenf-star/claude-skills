@@ -30,18 +30,16 @@ Access Google Sheets via the Google Sheets API v4 using a service account for au
 
 ### From a Google Sheets URL
 
-The helper script parses the spreadsheet ID and gid from any Google Sheets URL:
-
 ```bash
-python3 skills/google-sheets/gsheets.py \
-  --url "https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit?gid=SHEET_GID#gid=SHEET_GID" \
+python3 google-sheets/gsheets.py \
+  --url "https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit?gid=SHEET_GID" \
   --read
 ```
 
 ### By spreadsheet ID directly
 
 ```bash
-python3 skills/google-sheets/gsheets.py \
+python3 google-sheets/gsheets.py \
   --id "SPREADSHEET_ID" \
   --sheet "Sheet1" \
   --read
@@ -52,7 +50,7 @@ python3 skills/google-sheets/gsheets.py \
 Values are passed as a JSON array of arrays (rows of cells):
 
 ```bash
-python3 skills/google-sheets/gsheets.py \
+python3 google-sheets/gsheets.py \
   --url "https://docs.google.com/spreadsheets/d/.../edit?gid=0" \
   --write --range "A1" --values '[["Name","Score"],["Alice",95],["Bob",87]]'
 ```
@@ -62,7 +60,7 @@ python3 skills/google-sheets/gsheets.py \
 Appends after the last row with data in the sheet:
 
 ```bash
-python3 skills/google-sheets/gsheets.py \
+python3 google-sheets/gsheets.py \
   --url "https://docs.google.com/spreadsheets/d/.../edit?gid=0" \
   --append --values '[["Charlie",72]]'
 ```
@@ -72,11 +70,11 @@ python3 skills/google-sheets/gsheets.py \
 If you need to do something the script doesn't cover, use the authentication pattern directly in Python:
 
 ```python
-import json, time, urllib.request, urllib.parse, base64
+import json, time, os, urllib.request, urllib.parse, base64
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 
-SA_KEY = "/Users/zenfoo/Desktop/agents-492903-b819951769b4.json"
+SA_KEY = os.environ.get("GOOGLE_SA_KEY_PATH", os.path.expanduser("~/Desktop/agents-492903-b819951769b4.json"))
 
 def get_access_token(scope="https://www.googleapis.com/auth/spreadsheets"):
     with open(SA_KEY) as f:
@@ -98,34 +96,6 @@ def get_access_token(scope="https://www.googleapis.com/auth/spreadsheets"):
 ```
 
 Then call any Sheets API v4 endpoint with `Authorization: Bearer {token}`.
-
-## Automated Workflows
-
-### Refresh Product Areas 2.0
-
-Rebuilds the "Product Areas 2.0" sheet from scratch using "ProductAreaList" as the source of truth.
-
-**When to run:** Each quarter after a human has updated Columns A-D (L0, Tribe, Squad, PO) with one row per squad.
-
-**What it does:**
-1. Reads base squad data (A, B, C, D) from "Product Areas 2.0"
-2. Matches squads to ProductAreaList teams (exact, substring, and initial-letter matching)
-3. Expands rows: one per product area per squad
-4. Sets Column F dropdown validation (all squad rows, including placeholder for unmapped squads)
-5. Adds INDEX/MATCH formula in Column G for descriptions
-6. Merges A, B, C, D for consecutive same-squad rows
-
-**Single command:**
-```bash
-python3 skills/google-sheets/refresh_product_areas.py
-```
-
-**Assumptions:**
-- Columns A (L0), B (Tribe), C (Squad), D (PO) are pre-filled by a human
-- Column E is an intentional spacer (left empty)
-- ProductAreaList is the source of truth for product areas and descriptions
-- Squad-to-team matching is fuzzy (handles short names like "Cards" -> "Payments - Cards", abbreviations like "S&I" -> "Savings & Investment")
-- Unmatched squads get a "(no product areas mapped)" placeholder dropdown
 
 ## Common Mistakes
 
