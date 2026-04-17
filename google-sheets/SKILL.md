@@ -11,8 +11,8 @@ Access Google Sheets via the Google Sheets API v4 using a service account for au
 
 ## Prerequisites
 
-- **Service account key:** Set `GOOGLE_SA_KEY_PATH` env var, or default `~/Desktop/agents-492903-b819951769b4.json`
-- **Service account:** `prd-jira-agent@agents-492903.iam.gserviceaccount.com`
+- **Service account key:** Set `GOOGLE_SA_KEY_PATH` env var, or default `~/Downloads/agents-492903-8c747c3cd2fc.json`
+- **Service account:** `zen-agent@agents-492903.iam.gserviceaccount.com`
 - **Python 3** with `cryptography` library (pre-installed)
 - The target spreadsheet must be shared with the service account email (Editor for writes, Viewer for reads)
 
@@ -74,7 +74,7 @@ import json, time, os, urllib.request, urllib.parse, base64
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 
-SA_KEY = os.environ.get("GOOGLE_SA_KEY_PATH", os.path.expanduser("~/Desktop/agents-492903-b819951769b4.json"))
+SA_KEY = os.environ.get("GOOGLE_SA_KEY_PATH", os.path.expanduser("~/Downloads/agents-492903-8c747c3cd2fc.json"))
 
 def get_access_token(scope="https://www.googleapis.com/auth/spreadsheets"):
     with open(SA_KEY) as f:
@@ -99,7 +99,7 @@ Then call any Sheets API v4 endpoint with `Authorization: Bearer {token}`.
 
 ## Common Mistakes
 
-- **401 Unauthorized**: The spreadsheet isn't shared with the service account email. Share it with `prd-jira-agent@agents-492903.iam.gserviceaccount.com`.
+- **401 Unauthorized**: The spreadsheet isn't shared with the service account email. Share it with `zen-agent@agents-492903.iam.gserviceaccount.com`.
 - **403 Forbidden**: The Sheets API isn't enabled in the GCP project. Enable it at `console.cloud.google.com/apis/library/sheets.googleapis.com`.
 - **Using readonly scope for writes**: Read uses `spreadsheets.readonly`, writes need `spreadsheets`. The script handles this automatically.
 - **gid vs sheet name**: The API uses sheet names, not gid numbers. The script resolves gid to name automatically.

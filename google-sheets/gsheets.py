@@ -16,7 +16,7 @@ import urllib.request
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 
-SA_KEY = os.environ.get("GOOGLE_SA_KEY_PATH", os.path.expanduser("~/Desktop/agents-492903-b819951769b4.json"))
+SA_KEY = os.environ.get("GOOGLE_SA_KEY_PATH", os.path.expanduser("~/Downloads/agents-492903-8c747c3cd2fc.json"))
 BASE = "https://sheets.googleapis.com/v4/spreadsheets"
 
 
